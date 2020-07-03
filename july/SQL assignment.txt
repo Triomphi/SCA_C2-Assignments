@@ -1,0 +1,73 @@
+
+Question 1: WHICH CITY HAS THE BEST CUSTOMERS?
+
+--select the required column from the required table
+--get the sum total of invoices per city
+SELECT   BillingCity, sum(Total) 
+FROM Invoice
+-- group by city because we are looking for the city with highest total invoice
+GROUP BY BillingCity
+-- order by the sum total of each city's invoice in descending order
+ORDER BY sum(Total) DESC
+-- show top 1 response
+LIMIT 1;
+
+Question 2:WHICH COUNTRY HAS THE MOST INVOICE
+
+--select the required column from the required table
+SELECT   BillingCountry, count(Total) 
+FROM Invoice
+-- group by country because we are looking for the country with highest number of invoice
+GROUP BY BillingCountry
+--order the grouping by the country with the highest count of total invoice i.e in descending order
+ORDER BY count(Total) DESC
+--show top 5 responses
+LIMIT 5;
+
+Question 3: WHO IS THE BEST CUSTOMER
+
+--select the required column from the required table
+SELECT CustomerId, sum(Total)
+FROM Invoice
+-- group by cutomer id because we are looking for best customer
+GROUP BY CustomerId
+--order the grouping by the customer with the highest sum total i.e in descending order
+ORDER BY sum(Total) DESC
+--show only the first response i.e customer with highest spending
+LIMIT 1;
+
+Question 4: RETURN THE EMAIL, FIRSTNAME AND LASTNAME OF ROCK MUSIC LISTENERS ARRANGED ALPHABETICALLY
+
+--select required columns from required tables and join these tables on similar columns
+-- remember to select distinct firstnmaes, lastnames and emails to avoid duplicates
+SELECT DISTINCT Customer.FirstName,Customer.LastName, Customer.Email,
+genre.Name
+FROM Invoice  
+JOIN InvoiceLine
+ON InvoiceLine.InvoiceId = Invoice.InvoiceId
+JOIN Track
+ON InvoiceLine.TrackId = Track.TrackId
+JOIN Genre
+ON Track.GenreId = Genre.GenreId
+JOIN Customer
+ON Customer.CustomerId = Invoice.CustomerId
+--find all rows where genre is rock 
+WHERE Genre.Name = 'Rock'
+-- arrange alphabetically
+ORDER BY Customer.FirstName;
+
+Question 5: FIND THE MOST POPULAR MUSIC GENRE FOR EACH COUNTRY
+
+--select required columns from required tables and join these tables on similar columns
+-- sum up the unitprice as we would be needing its sum total to know which genre was bought the most per country
+SELECT Invoice.BillingCountry, Genre.Name,
+sum (InvoiceLine.UnitPrice) 'SumUnitPrice'
+FROM Genre
+JOIN Track
+ON Genre.GenreId = Track.GenreId
+JOIN InvoiceLine
+ON Track.TrackId = InvoiceLine.TrackId
+JOIN Invoice
+ON Invoice.InvoiceId = InvoiceLine.InvoiceId
+-- get a grouping of countries and their respective genres
+GROUP BY Invoice.BillingCountry, Genre.Name
